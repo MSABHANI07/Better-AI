@@ -23,7 +23,6 @@
     header p{margin:0;color:var(--muted);font-size:13px}
     .main{display:grid;grid-template-columns:1fr 320px;min-height:520px;background:#071018}
 
-    /* Left chat */
     .chat{padding:18px;display:flex;flex-direction:column;gap:12px}
     #chatbox{flex:1;overflow:auto;padding:10px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));}
     .msg{margin:8px 0;max-width:85%}
@@ -35,13 +34,12 @@
 
     .compose{display:flex;gap:8px;padding-top:8px}
     #input{flex:1;padding:12px;border-radius:10px;border:none;background:#0b1a1f;color:white;font-size:15px}
-    #send-btn{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;color:#001;background:#fff;font-weight:700;cursor:pointer}
+    #send-btn{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;color:#001;font-weight:700;cursor:pointer}
 
-    /* Right panel */
     .panel{background:#061118;padding:12px;border-left:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:10px}
     .panel h3{margin:6px 0 0 0}
     .kv{display:flex;flex-direction:column;gap:6px}
-    input.k{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:white}
+    input.k, select.k{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:white}
     button.ghost{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--muted);cursor:pointer}
     footer{padding:10px 14px;background:#020606;font-size:13px;color:var(--muted);text-align:center}
 
@@ -81,9 +79,7 @@
         <div class="kv">
           <label style="font-size:13px;color:var(--muted)">Model</label>
           <select id="model" class="k">
-            <option value="llama-3.3-70b-versatile
-">llama-3.3-70b-versatile
-</option>
+            <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
             <option value="mixtral-instruct-8k">mixtral-instruct-8k</option>
           </select>
         </div>
@@ -100,11 +96,10 @@
       </aside>
     </div>
 
-    <footer>BetterAI — made for you. Want deployment? Ask me to deploy to Vercel.</footer>
+    <footer>BetterAI — made for you.</footer>
   </div>
 
   <script>
-    // Simple BetterAI single-file web client for Groq
     const chatbox = document.getElementById('chatbox');
     const input = document.getElementById('input');
     const sendBtn = document.getElementById('send-btn');
@@ -115,14 +110,18 @@
     const modelSelect = document.getElementById('model');
     const tempInput = document.getElementById('temp');
 
-    // Load saved key
     const STORAGE_KEY = 'BETTERAI_GROQ_KEY_V1';
     const STORAGE_MODEL = 'BETTERAI_MODEL_V1';
     const STORAGE_TEMP = 'BETTERAI_TEMP_V1';
+
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) { apiKeyInput.value = stored; statusEl.textContent = 'Key saved'; }
-    const sm = localStorage.getItem(STORAGE_MODEL); if(sm) modelSelect.value = sm;
-    const st = localStorage.getItem(STORAGE_TEMP); if(st) tempInput.value = st;
+
+    const sm = localStorage.getItem(STORAGE_MODEL);
+    if (sm) modelSelect.value = sm;
+
+    const st = localStorage.getItem(STORAGE_TEMP);
+    if (st) tempInput.value = st;
 
     saveKeyBtn.onclick = () => {
       const k = apiKeyInput.value.trim();
@@ -131,13 +130,20 @@
       localStorage.setItem(STORAGE_MODEL, modelSelect.value);
       localStorage.setItem(STORAGE_TEMP, tempInput.value);
       statusEl.textContent = 'Key saved';
-      alert('API key saved locally in your browser. Ready to chat.');
+      alert('API key saved. Ready to chat.');
     };
-    clearKeyBtn.onclick = () => { localStorage.removeItem(STORAGE_KEY); apiKeyInput.value = ''; statusEl.textContent = 'No key saved'; };
+
+    clearKeyBtn.onclick = () => {
+      localStorage.removeItem(STORAGE_KEY);
+      apiKeyInput.value = '';
+      statusEl.textContent = 'No key saved';
+    };
 
     function appendMessage(role, text){
-      const wrap = document.createElement('div'); wrap.className = 'msg ' + (role==='user'?'user':'ai');
-      const bubble = document.createElement('div'); bubble.className = 'bubble';
+      const wrap = document.createElement('div');
+      wrap.className = 'msg ' + (role==='user'?'user':'ai');
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
       bubble.innerHTML = text.replace(/\n/g,'<br>');
       wrap.appendChild(bubble);
       chatbox.appendChild(wrap);
@@ -145,12 +151,13 @@
     }
 
     async function sendMessage(){
-      const text = input.value.trim(); if(!text) return;
+      const text = input.value.trim();
+      if (!text) return;
       appendMessage('user', text);
       input.value = '';
 
       const key = localStorage.getItem(STORAGE_KEY);
-      if(!key){ alert('No API key saved. Paste it in the right panel and click Save.'); return; }
+      if (!key) { alert('No API key saved.'); return; }
 
       const model = modelSelect.value;
       const temperature = parseFloat(tempInput.value) || 0.2;
@@ -158,63 +165,71 @@
       appendMessage('ai', '...');
       const lastBubble = chatbox.querySelector('.msg.ai:last-child .bubble');
 
-      try{
-        const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method:'POST',
-          headers:{
-            'Content-Type':'application/json',
-            'Authorization': 'Bearer ' + key
+      try {
+        const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + key
           },
-          body: JSON.stringify({ model, messages:[{role:'user',content:text}], temperature, stream:true })
+          body: JSON.stringify({
+            model,
+            messages: [{ role: "user", content: text }],
+            temperature,
+            stream: true
+          })
         });
 
-        if(!resp.ok){
+        if (!resp.ok) {
           const err = await resp.text();
-          lastBubble.innerText = 'Error: ' + resp.status + ' — ' + err;
+          lastBubble.innerText = "Error: " + resp.status + " — " + err;
           return;
         }
 
         const reader = resp.body.getReader();
         const decoder = new TextDecoder();
         let done = false;
-        let accumulated = '';
+        let accumulated = "";
 
-        while(!done){
-          const {value, done: rdone} = await reader.read();
+        while (!done) {
+          const { value, done: rdone } = await reader.read();
           done = rdone;
-          if(value){
+          if (value) {
             const chunk = decoder.decode(value);
-            // Groq streams lines that begin with 'data:'
-            const parts = chunk.split('\n').filter(Boolean);
-            for(const part of parts){
+            const parts = chunk.split("\n").filter(Boolean);
+
+            for (const part of parts) {
               const line = part.trim();
-              if(!line.startsWith('data:')) continue;
-              const payload = line.replace(/^data:\s*/, '');
-              if(payload==='[DONE]') { done = true; break; }
-              try{
+              if (!line.startsWith("data:")) continue;
+
+              const payload = line.replace(/^data:\s*/, "");
+              if (payload === "[DONE]") break;
+
+              try {
                 const piece = JSON.parse(payload);
-                const token = piece.choices?.[0]?.delta?.content;
-                if(token){
-                  accumulated += token;
-                  lastBubble.innerHTML = accumulated.replace(/\n/g,'<br>');
+                const delta = piece.choices?.[0]?.delta?.content || "";
+                if (delta) {
+                  accumulated += delta;
+                  lastBubble.innerHTML = accumulated.replace(/\n/g, "<br>");
                 }
-              }catch(e){
-                // ignore parse errors
-              }
+              } catch (e) {}
             }
           }
         }
-      }catch(err){
-        lastBubble.innerText = 'Network error: ' + err.message;
+      } catch (err) {
+        lastBubble.innerText = "Network error: " + err.message;
       }
     }
 
     sendBtn.onclick = sendMessage;
-    input.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+    input.addEventListener("keydown", (e)=>{
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
 
-    // small welcome message
-    appendMessage('ai','Hello! I\'m <b>BetterAI</b>. Paste your Groq API key in the right panel and click Save, then ask me anything.');
+    appendMessage('ai','Hello! I\'m <b>BetterAI</b>. Paste your Groq API key and click Save.');
   </script>
 </body>
 </html>
-
