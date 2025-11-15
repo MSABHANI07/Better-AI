@@ -3,169 +3,175 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bumalang Motors</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <title>BetterAI Chatbot</title>
   <style>
     body {
-      margin: 0;
-      font-family: "Poppins", sans-serif;
-      background: #0d0d0d;
-      color: white;
-      overflow-x: hidden;
-    }
-    header {
-      padding: 30px 60px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      backdrop-filter: blur(10px);
-      background: rgba(0, 0, 0, 0.35);
-      z-index: 1000;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-      letter-spacing: 2px;
-      font-weight: 700;
-    }
-    nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: #ddd;
-      font-weight: 400;
-      transition: 0.3s;
-    }
-    nav a:hover {
-      color: #fff;
-    }
-    .hero {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0f1f, #000000);
+      color: #e8e8e8;
       height: 100vh;
+      margin: 0;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1920') center/cover no-repeat;
+      overflow: hidden;
+    }
+
+    header {
       text-align: center;
+      padding: 20px 0;
+      font-size: 28px;
+      font-weight: bold;
+      color: #00eaff;
+      text-shadow: 0 0 12px #00eaff;
     }
-    .hero h2 {
-      font-size: 70px;
-      font-weight: 700;
-      text-shadow: 0 0 20px black;
+
+    #chatbox {
+      flex: 1;
+      padding: 25px;
+      overflow-y: auto;
+      border-top: 2px solid rgba(0, 255, 180, 0.2);
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
     }
-    .hero p {
-      font-size: 22px;
-      margin-top: -10px;
-      opacity: 0.8;
-      text-shadow: 0 0 10px black;
+
+    .msg-user, .msg-ai {
+      padding: 14px 18px;
+      margin: 14px 0;
+      border-radius: 14px;
+      font-size: 16px;
+      max-width: 80%;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease-in-out;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .btn {
-      margin-top: 30px;
-      padding: 15px 40px;
-      font-size: 18px;
-      background: #ff4d4d;
-      color: white;
+
+    .msg-user {
+      background: rgba(0, 255, 255, 0.08);
+      color: #b6f5ff;
+      border-left: 4px solid #00eaff;
+      margin-left: auto;
+    }
+
+    .msg-ai {
+      background: rgba(0, 255, 120, 0.08);
+      color: #c5ffcb;
+      border-left: 4px solid #00ff88;
+      margin-right: auto;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #input-area {
+      display: flex;
+      padding: 15px;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      border-top: 2px solid rgba(0, 255, 180, 0.2);
+    }
+
+    #input {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
       border: none;
-      border-radius: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 17px;
+      outline: none;
+      box-shadow: inset 0 0 8px #00ffc855;
+    }
+
+    #send-btn {
+      padding: 14px 24px;
+      font-size: 17px;
+      background: linear-gradient(135deg, #00eaff, #00ff9d);
+      border: none;
+      border-radius: 12px;
       cursor: pointer;
-      transition: 0.3s;
+      color: black;
+      font-weight: bold;
+      box-shadow: 0 0 12px #00ffcc88;
+      transition: 0.2s;
     }
-    .btn:hover {
-      background: #ff1a1a;
-    }
-    .section {
-      padding: 120px 60px;
-      text-align: center;
-    }
-    .section h3 {
-      font-size: 42px;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
-    .card-wrapper {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 40px;
-      padding-top: 40px;
-    }
-    .card {
-      background: #1a1a1a;
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-      transition: 0.3s;
-    }
-    .card:hover {
-      transform: translateY(-8px);
-    }
-    .card img {
-      width: 100%;
-      border-radius: 15px;
-      margin-bottom: 15px;
-    }
-    footer {
-      padding: 40px;
-      text-align: center;
-      background: #0b0b0b;
-      margin-top: 60px;
-      color: #888;
+
+    #send-btn:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 20px #00ffccdd;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>BUMALANG</h1>
-    <nav>
-      <a href="#models">Models</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
 
-  <section class="hero">
-    <h2>UNLEASH THE BEAST</h2>
-    <p>Speed • Style • Performance — redefined.</p>
-    <button class="btn">Explore Models</button>
-  </section>
+  <header>BetterAI Assistant</header>
 
-  <section id="models" class="section">
-    <h3>Our Models</h3>
+  <div id="chatbox"></div>
 
-    <div class="card-wrapper">
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?q=80&w=1200" />
-        <h4>Bumalang Veloce</h4>
-        <p>Inspired by McLaren — extreme aerodynamics and precision engineering.</p>
-      </div>
+  <div id="input-area">
+    <input id="input" placeholder="Type your message..." />
+    <button id="send-btn">Send</button>
+  </div>
 
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=1200" />
-        <h4>Bumalang Tempesta</h4>
-        <p>Inspired by Lamborghini — pure aggression, raw power, and iconic design.</p>
-      </div>
+  <script>
+    const sendBtn = document.getElementById("send-btn");
+    const input = document.getElementById("input");
+    const chatbox = document.getElementById("chatbox");
 
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=1200" />
-        <h4>Bumalang Hyperion</h4>
-        <p>Inspired by Bugatti — ultimate top-speed domination.</p>
-      </div>
-    </div>
-  </section>
+    let apiKey = localStorage.getItem("GROQ_API_KEY");
+    if (!apiKey) {
+      apiKey = prompt("Enter your Groq API Key:");
+      localStorage.setItem("GROQ_API_KEY", apiKey);
+    }
 
-  <section id="about" class="section">
-    <h3>About Bumalang</h3>
-    <p style="max-width: 700px; margin: auto; opacity: 0.8;">
-      Bumalang combines the spirit of Bugatti, Lamborghini, and McLaren into a single brand.
-      Our focus is simple: **speed, performance, and breathtaking design**.
-    </p>
-  </section>
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
 
-  <footer id="contact">
-    © 2025 Bumalang Motors — All Rights Reserved
-  </footer>
+      chatbox.innerHTML += `<div class='msg-user'><strong>You:</strong> ${text}</div>`;
+      chatbox.scrollTop = chatbox.scrollHeight;
+      input.value = "";
+
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
+        body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{ role: "user", content: text }], stream: true })
+      });
+
+      const reader = response.body.getReader();
+      let aiMessage = "";
+
+      let bubble = document.createElement("div");
+      bubble.className = "msg-ai";
+      bubble.innerHTML = `<strong>BetterAI:</strong> `;
+      chatbox.appendChild(bubble);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = new TextDecoder().decode(value);
+        const lines = chunk.split("
+").filter(l => l.startsWith("data:"));
+
+        for (const line of lines) {
+          if (line === "data: [DONE]") continue;
+          const json = JSON.parse(line.replace("data: ", ""));
+          const token = json.choices?.[0]?.delta?.content;
+          if (token) {
+            aiMessage += token;
+            bubble.innerHTML += token;
+            chatbox.scrollTop = chatbox.scrollHeight;
+          }
+        }
+      }
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    input.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(); });
+  </script>
+
 </body>
 </html>
