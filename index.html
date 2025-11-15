@@ -25,6 +25,36 @@
       text-shadow: 0 0 12px #00eaff;
     }
 
+    #apikey-area {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      justify-content: center;
+      background: rgba(0,0,0,0.6);
+    }
+
+    #apikey-input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 16px;
+    }
+
+    #save-apikey-btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #00eaff;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
     #chatbox {
       flex: 1;
       padding: 25px;
@@ -109,6 +139,11 @@
 
   <header>BetterAI Assistant</header>
 
+  <div id="apikey-area">
+    <input id="apikey-input" type="text" placeholder="Enter your API Key" />
+    <button id="save-apikey-btn">Save API Key</button>
+  </div>
+
   <div id="chatbox"></div>
 
   <div id="input-area">
@@ -121,13 +156,25 @@
     const input = document.getElementById("input");
     const chatbox = document.getElementById("chatbox");
 
+    const apikeyInput = document.getElementById("apikey-input");
+    const saveApiKeyBtn = document.getElementById("save-apikey-btn");
+
     let apiKey = localStorage.getItem("GROQ_API_KEY");
-    if (!apiKey) {
-      apiKey = prompt("Enter your Groq API Key:");
-      localStorage.setItem("GROQ_API_KEY", apiKey);
+    if (apiKey) {
+      apikeyInput.value = apiKey;
     }
 
+    saveApiKeyBtn.addEventListener("click", () => {
+      const key = apikeyInput.value.trim();
+      if (!key) return alert("Please enter a valid API Key");
+      apiKey = key;
+      localStorage.setItem("GROQ_API_KEY", key);
+      alert("API Key saved! You can now chat with BetterAI.");
+    });
+
     async function sendMessage() {
+      if (!apiKey) return alert("Please enter your API Key first.");
+
       const text = input.value.trim();
       if (!text) return;
 
@@ -153,8 +200,7 @@
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = new TextDecoder().decode(value);
-        const lines = chunk.split("
-").filter(l => l.startsWith("data:"));
+        const lines = chunk.split("\n").filter(l => l.startsWith("data:"));
 
         for (const line of lines) {
           if (line === "data: [DONE]") continue;
